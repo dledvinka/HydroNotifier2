@@ -26,6 +26,8 @@ namespace FunctionApp2
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             await Do(log);
+
+            // https://medium.com/statuscode/getting-key-vault-secrets-in-azure-functions-37620fd20a0b
         }
 
         private static async Task Do(ILogger log)
