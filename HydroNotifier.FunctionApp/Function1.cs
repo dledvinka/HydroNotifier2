@@ -1,19 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
+using HydroNotifier.Core;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nexmo.Api;
 
-namespace FunctionApp2
+namespace HydroNotifier.FunctionApp
 {
     public static class Function1
     {

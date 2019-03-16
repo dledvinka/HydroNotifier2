@@ -1,6 +1,6 @@
-﻿namespace FunctionApp2
+﻿namespace HydroNotifier.Core
 {
-    internal enum HydroStatus
+    public enum HydroStatus
     {
         Unknown,
         Low,

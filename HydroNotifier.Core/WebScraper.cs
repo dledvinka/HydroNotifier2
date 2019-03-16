@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FunctionApp2
+namespace HydroNotifier.Core
 {
     public class WebScraper
     {

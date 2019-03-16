@@ -1,4 +1,4 @@
-﻿namespace FunctionApp2
+﻿namespace HydroNotifier.Core
 {
     public class HydroQuery
     {
