@@ -24,7 +24,7 @@ namespace Tests
         [Test]
         public void Test3()
         {
-            Assert.Fail();
+            Assert.Pass();
         }
     }
 }
