@@ -22,7 +22,7 @@ namespace Tests
         }
 
         [Test]
-        public void Test3(aaa)
+        public void Test3()
         {
             Assert.Fail();
         }
