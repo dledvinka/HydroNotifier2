@@ -13,7 +13,7 @@ namespace HydroNotifier.FunctionApp
         [FunctionName("HydroGuardTimerFunction")]
         public static void Run(
             //[TimerTrigger("*/5 * * * * *")]TimerInfo myTimer,
-            [TimerTrigger("0 0 * * * *", RunOnStartup = true)]TimerInfo myTimer,
+            [TimerTrigger("0 0 * * * *")]TimerInfo myTimer,
             [SendGrid(
                 To = "ledvinka.david@gmail.com",
                 Subject = "Thank you!",
