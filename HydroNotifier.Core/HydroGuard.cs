@@ -9,15 +9,23 @@ namespace HydroNotifier.Core
         private static HydroQuery _lomnaQuery = new HydroQuery("Lomná", "http://hydro.chmi.cz/hpps/popup_hpps_prfdyn.php?seq=307326");
         private static HydroQuery _olseQuery = new HydroQuery("Olše", "http://hydro.chmi.cz/hpps/popup_hpps_prfdyn.php?seq=307325");
         private static HydroStatus _lastReportedStatus = HydroStatus.Unknown;
+        private SendGrid.Helpers.Mail.SendGridMessage _message;
+        private ILogger _log;
 
-        public async Task Do(ILogger log)
+        public HydroGuard(SendGrid.Helpers.Mail.SendGridMessage message, ILogger log)
+        {
+            _message = message;
+            _log = log;
+        }
+
+        public async Task Do()
         {
             HydroData lomnaData, olseData;
 
             using (HttpClient client = new HttpClient())
             {
-                lomnaData = await new WebScraper(_lomnaQuery, client, log).GetLatestValuesAsync();
-                olseData = await new WebScraper(_olseQuery, client, log).GetLatestValuesAsync();
+                lomnaData = await new WebScraper(_lomnaQuery, client, _log).GetLatestValuesAsync();
+                olseData = await new WebScraper(_olseQuery, client, _log).GetLatestValuesAsync();
             }
 
             double flowSum = lomnaData.FlowLitresPerSecond + olseData.FlowLitresPerSecond;
@@ -26,19 +34,32 @@ namespace HydroNotifier.Core
 
             if (currentStatus != _lastReportedStatus)
             {
-                OnStatusChanged(currentStatus, lomnaData, olseData, log);
+                OnStatusChanged(currentStatus, lomnaData, olseData, _log);
             }
 
-            log.LogInformation("Done.");
+            _log.LogInformation("Done.");
         }
 
         private void OnStatusChanged(HydroStatus currentStatus, HydroData lomnaData, HydroData olseData, ILogger log)
         {
             log.LogInformation($"Status changed: '{currentStatus}'");
-            _lastReportedStatus = currentStatus;
 
-            //SendSmsNotification(log);
-            //SendEmailNotification(log);
+
+            SendSmsNotification(log);
+            SendEmailNotification(log);
+
+            _lastReportedStatus = currentStatus;
+        }
+
+        private void SendEmailNotification(ILogger log)
+        {
+            _message = new SendGrid.Helpers.Mail.SendGridMessage();
+        }
+
+        private void SendSmsNotification(ILogger log)
+        {
+            var smsNotifier = new SmsNotifier(new SettingsService(), _log);
+            smsNotifier.SendSmsNotification("TEST HydroNorifier");
         }
 
         private HydroStatus GetCurrentStatus(double flowSum, HydroStatus lastReportedStatus)

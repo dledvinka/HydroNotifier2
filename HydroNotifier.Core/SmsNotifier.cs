@@ -1,30 +1,36 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nexmo.Api;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace HydroNotifier.Core
 {
     public class SmsNotifier
     {
-        public void SendSmsNotification(ILogger log)
+        private readonly ISettingsService _settingsService;
+        private readonly ILogger _log;
+
+        public SmsNotifier(ISettingsService settingsService, ILogger log)
         {
-            var smsClient = new Client(creds: new Nexmo.Api.Request.Credentials
+            _settingsService = settingsService;
+            _log = log;
+        }
+
+        public void SendSmsNotification(string message)
+        {
+            var smsClient = new Nexmo.Api.Client(creds: new Nexmo.Api.Request.Credentials
             {
-                ApiKey = "",
-                ApiSecret = ""
+                ApiKey = _settingsService.SmsApiKey,
+                ApiSecret = _settingsService.SmsApiSecret
             });
 
             var results = smsClient.SMS.Send(request: new SMS.SMSRequest
             {
                 from = "HydroNotifier",
-                to = "",
-                text = "A test SMS sent using the Nexmo SMS API"
+                to = _settingsService.SmsTo,
+                text = message
             });
 
-            log.LogInformation(JsonConvert.SerializeObject(results));
+            _log.LogInformation(JsonConvert.SerializeObject(results));
         }
     }
 }
