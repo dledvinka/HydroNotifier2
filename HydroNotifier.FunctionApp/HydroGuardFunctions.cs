@@ -24,12 +24,13 @@ namespace HydroNotifier.FunctionApp
             ExecutionContext executionContext)
         {
             message = null;
-            var path = executionContext.FunctionDirectory;
 
             try
             {
                 log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-                var hg = new HydroGuard(message, new StateService(path), log);
+                var stateService = new StateService(executionContext.FunctionDirectory);
+                var settingsService = new SettingsService();
+                var hg = new HydroGuard(message, stateService, settingsService, log);
                 Task.Run(() => hg.Do());
             }
             catch (Exception ex)

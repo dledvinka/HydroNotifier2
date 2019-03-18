@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
@@ -11,11 +12,13 @@ namespace HydroNotifier.Core
         private SendGrid.Helpers.Mail.SendGridMessage _message;
         private ILogger _log;
         private readonly IStateService _stateService;
+        private readonly ISettingsService _settingsService;
 
-        public HydroGuard(SendGrid.Helpers.Mail.SendGridMessage message, IStateService stateService, ILogger log)
+        public HydroGuard(SendGrid.Helpers.Mail.SendGridMessage message, IStateService stateService, ISettingsService settingsService, ILogger log)
         {
             _message = message;
             _stateService = stateService;
+            _settingsService = settingsService;
             _log = log;
         }
 
@@ -54,19 +57,25 @@ namespace HydroNotifier.Core
 
         private void SendNotifications(HydroStatus currentStatus, HydroData lomnaData, HydroData olseData)
         {
-            SendEmailNotification(_log);
-            SendSmsNotification(_log);
+            SendEmailNotification(currentStatus, lomnaData, olseData, _log);
+            SendSmsNotification(currentStatus, lomnaData, olseData, _log);
         }
 
-        private void SendEmailNotification(ILogger log)
+        private void SendEmailNotification(HydroStatus currentStatus, HydroData lomnaData, HydroData olseData, ILogger log)
         {
-            _message = new SendGrid.Helpers.Mail.SendGridMessage();
+            var message = new EmailMessageBuilder(_settingsService)
+                .BuildMessage(lomnaData, olseData, currentStatus, DateTime.Now);
+
+            _message = message;
         }
 
-        private void SendSmsNotification(ILogger log)
+        private void SendSmsNotification(HydroStatus currentStatus, HydroData lomnaData, HydroData olseData, ILogger log)
         {
-            var smsNotifier = new SmsNotifier(new SettingsService(), _log);
-            smsNotifier.SendSmsNotification("TEST HydroNorifier");
+            var message = new SmsMessageBuilder()
+                .BuildMessage(lomnaData, olseData, currentStatus, DateTime.Now, _settingsService.SmsTo);
+
+            var smsNotifier = new SmsNotifier(_settingsService, _log);
+            smsNotifier.SendSmsNotification(message);
         }
 
         private HydroStatus GetCurrentStatus(double flowSum, HydroStatus lastReportedStatus)
