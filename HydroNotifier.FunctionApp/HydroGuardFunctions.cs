@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using HydroNotifier.Core;
 using Microsoft.Azure.WebJobs;
@@ -18,14 +20,16 @@ namespace HydroNotifier.FunctionApp
                 Subject = "Thank you!",
                 Text = "Hi, Thank you for registering!!!!",
                 From = "no-reply@jankowskimichal.pl")] out SendGridMessage message,
-            ILogger log)
+            ILogger log,
+            ExecutionContext executionContext)
         {
             message = null;
+            var path = executionContext.FunctionDirectory;
 
             try
             {
                 log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-                var hg = new HydroGuard(message, log);
+                var hg = new HydroGuard(message, new StateService(path), log);
                 Task.Run(() => hg.Do());
             }
             catch (Exception ex)
