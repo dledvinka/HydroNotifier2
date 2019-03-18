@@ -44,9 +44,8 @@ namespace HydroNotifier.Core
         {
             log.LogInformation($"Status changed: '{currentStatus}'");
 
-
-            SendSmsNotification(log);
             SendEmailNotification(log);
+            SendSmsNotification(log);
 
             _lastReportedStatus = currentStatus;
         }

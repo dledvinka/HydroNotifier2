@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using HydroNotifier.Core;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -8,8 +9,6 @@ namespace HydroNotifier.FunctionApp
 {
     public static class HydroGuardFunctions
     {
-        private static string superSecret = System.Environment.GetEnvironmentVariable("TEST");
-
         [FunctionName("HydroGuardTimerFunction")]
         public static void Run(
             //[TimerTrigger("*/5 * * * * *")]TimerInfo myTimer,
@@ -21,12 +20,18 @@ namespace HydroNotifier.FunctionApp
                 From = "no-reply@jankowskimichal.pl")] out SendGridMessage message,
             ILogger log)
         {
-
             message = null;
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-            new HydroGuard(message, log).Do();
 
-            // https://medium.com/statuscode/getting-key-vault-secrets-in-azure-functions-37620fd20a0b
+            try
+            {
+                log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+                var hg = new HydroGuard(message, log);
+                Task.Run(() => hg.Do());
+            }
+            catch (Exception ex)
+            {
+                log.LogCritical(ex, $"Exception found {ex.Message}");
+            }
         }
     }
 }

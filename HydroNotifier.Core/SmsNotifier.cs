@@ -30,6 +30,7 @@ namespace HydroNotifier.Core
                 text = message
             });
 
+            // {"message-count":"1","messages":[{"status":"0","message-id":"1500000011CDD9A6","to":"420735159055","client-ref":null,"remaining-balance":"10.86750000","message-price":"0.04530000","network":"23001","error-text":null}]}
             _log.LogInformation(JsonConvert.SerializeObject(results));
         }
     }
