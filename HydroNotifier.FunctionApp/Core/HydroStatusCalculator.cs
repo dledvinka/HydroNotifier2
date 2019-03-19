@@ -14,7 +14,7 @@ namespace HydroNotifier.FunctionApp.Core
 
         public HydroStatus GetCurrentStatus(List<HydroData> data, HydroStatus lastReportedStatus)
         {
-            var flowSum = data.Sum(p => p.FlowLitresPerSecond);
+            var flowSum = data.Sum(p => p.FlowLitersPerSecond);
 
             if (lastReportedStatus != HydroStatus.Low && flowSum <= NORMAL_TO_LOW_THRESHOLD)
                 return HydroStatus.Low;

@@ -34,10 +34,10 @@ namespace HydroNotifier.FunctionApp.Core
             var lastValueRow = rows[1];
             var values = lastValueRow.SelectNodes("td");
             var date = values[0].InnerText;
-            var flowLitresPerSecond = double.Parse(values[2].InnerText, NumberStyles.Any, CultureInfo.InvariantCulture) * 1000.0d;
-            _log.LogInformation($"Name = '{_query.Name}', Date = '{date}', FlowInLitresPerSecond = '{flowLitresPerSecond}'");
+            var flowLitersPerSecond = double.Parse(values[2].InnerText, NumberStyles.Any, CultureInfo.InvariantCulture) * 1000.0d;
+            _log.LogTrace($"Name = '{_query.Name}', Date = '{date}', FlowInLitersPerSecond = '{flowLitersPerSecond}'");
 
-            return new HydroData(_query.Name, date, flowLitresPerSecond);
+            return new HydroData(_query.Name, date, flowLitersPerSecond);
         }
     }
 }

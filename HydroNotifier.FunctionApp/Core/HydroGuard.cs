@@ -37,15 +37,12 @@ namespace HydroNotifier.FunctionApp.Core
                 hydroData.Add(await new WebScraper(_olseQuery, client, _log).GetLatestValuesAsync());
             }
 
-            //double flowSum = 1000.0;
-            //lomnaData = new HydroData("Reka1", DateTime.Now.ToString(), 1000.0);
-            //olseData = new HydroData("Reka2", DateTime.Now.ToString(), 2000.0);
-
             var lastReportedStatus = _stateService.GetStatus();
             HydroStatus currentStatus = new HydroStatusCalculator().GetCurrentStatus(hydroData, lastReportedStatus) ;
 
+            _log.LogTrace($"Previous state: {lastReportedStatus}, current state: {currentStatus}");
             bool statusChanged = currentStatus != lastReportedStatus;
-            //if (statusChanged)
+            if (statusChanged)
             {
                 bool notificationsSent = SendNotifications(currentStatus, hydroData);
 

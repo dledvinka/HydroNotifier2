@@ -16,21 +16,21 @@ namespace HydroNotifier.FunctionApp.Notifications
             _settingsService = settingsService;
         }
 
-        public SendGrid.Helpers.Mail.SendGridMessage BuildMessage(List<HydroData> data, HydroStatus currentStatus, in DateTime stateChangedTimeStamp)
+        public SendGridMessage BuildMessage(List<HydroData> data, HydroStatus currentStatus, DateTime stateChangedTimeStamp)
         {
-            var emailMessage = new SendGrid.Helpers.Mail.SendGridMessage();
+            var emailMessage = new SendGridMessage();
 
             string stateName = Convert.StatusToText(currentStatus);
             string message = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp}\n\n";
 
             foreach (var hydroData in data)
             {
-                message += $"{hydroData.RiverName}: {hydroData.FlowLitresPerSecond} l/s v {hydroData.Timestamp}\n\n";
+                message += $"{hydroData.RiverName}: {hydroData.FlowLitersPerSecond} l/s v {hydroData.Timestamp}\n\n";
             }
 
             emailMessage.Subject = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp}";
             emailMessage.PlainTextContent = message;
-            emailMessage.AddTo("ledvinka.david@gmail.com");
+            emailMessage.AddTo("AmilanD@seznam.cz");
             emailMessage.AddTo("david.ledvinka@post.cz");
             emailMessage.From = new EmailAddress("hydronotifier@no-reply.com", "HydroNotifier");
 

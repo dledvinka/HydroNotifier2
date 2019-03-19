@@ -19,13 +19,14 @@ namespace HydroNotifier.FunctionApp
         {
             try
             {
-                log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+                log.LogTrace($"C# Timer trigger function executed at: {DateTime.Now}");
                 var stateService = new StateService(executionContext.FunctionDirectory);
                 var settingsService = new SettingsService();
 
                 var hg = new HydroGuard(messageCollector, stateService, settingsService, log);
                 await hg.DoAsync();
                 await messageCollector.FlushAsync();
+                log.LogTrace("Done.");
             }
             catch (Exception ex)
             {
