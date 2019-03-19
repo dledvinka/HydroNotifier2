@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using SendGrid.Helpers.Mail;
 
 namespace HydroNotifier.Core
 {
@@ -9,14 +10,14 @@ namespace HydroNotifier.Core
     {
         private static HydroQuery _lomnaQuery = new HydroQuery("Lomná", "http://hydro.chmi.cz/hpps/popup_hpps_prfdyn.php?seq=307326");
         private static HydroQuery _olseQuery = new HydroQuery("Olše", "http://hydro.chmi.cz/hpps/popup_hpps_prfdyn.php?seq=307325");
-        private SendGrid.Helpers.Mail.SendGridMessage _message;
         private ILogger _log;
+        private SendGridMessage _message;
         private readonly IStateService _stateService;
         private readonly ISettingsService _settingsService;
 
-        public HydroGuard(SendGrid.Helpers.Mail.SendGridMessage message, IStateService stateService, ISettingsService settingsService, ILogger log)
+        public HydroGuard(out SendGrid.Helpers.Mail.SendGridMessage message, IStateService stateService, ISettingsService settingsService, ILogger log)
         {
-            _message = message;
+            _message = message = null;
             _stateService = stateService;
             _settingsService = settingsService;
             _log = log;
@@ -35,15 +36,15 @@ namespace HydroNotifier.Core
             double flowSum = lomnaData.FlowLitresPerSecond + olseData.FlowLitresPerSecond;
 
             //double flowSum = 1000.0;
-            //lomnaData = null;
-            //olseData = null;
+            //lomnaData = new HydroData("Reka1", DateTime.Now.ToString(), 1000.0);
+            //olseData = new HydroData("Reka2", DateTime.Now.ToString(), 2000.0);
 
             var lastReportedStatus = _stateService.GetStatus();
             _log.LogInformation($"Last reported status: '{lastReportedStatus}'");
             HydroStatus currentStatus = GetCurrentStatus(flowSum, lastReportedStatus);
 
             bool statusChanged = currentStatus != lastReportedStatus;
-            if (statusChanged)
+            //if (statusChanged)
             {
                 _log.LogInformation($"Status changed: '{currentStatus}'");
                 SendNotifications(currentStatus, lomnaData, olseData);

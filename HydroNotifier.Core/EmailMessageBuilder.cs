@@ -25,9 +25,8 @@ namespace HydroNotifier.Core
             emailMessage.Subject = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp}";
             emailMessage.PlainTextContent = message;
             emailMessage.AddTo("ledvinka.david@gmail.com");
-            emailMessage.From = new EmailAddress("ledvinka.david@gmail.com");
-
-            // TODO czdaled
+            emailMessage.AddTo("david.ledvinka@post.cz");
+            emailMessage.From = new EmailAddress("hydronotifier@no-reply.com", "HydroNotifier");
 
             return emailMessage;
         }

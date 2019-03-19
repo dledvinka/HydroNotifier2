@@ -15,11 +15,7 @@ namespace HydroNotifier.FunctionApp
         public static void Run(
             //[TimerTrigger("*/5 * * * * *")]TimerInfo myTimer,
             [TimerTrigger("0 0 * * * *")]TimerInfo myTimer,
-            [SendGrid(
-                To = "ledvinka.david@gmail.com",
-                Subject = "Thank you!",
-                Text = "Hi, Thank you for registering!!!!",
-                From = "no-reply@jankowskimichal.pl")] out SendGridMessage message,
+            [SendGrid] out SendGridMessage message,
             ILogger log,
             ExecutionContext executionContext)
         {
@@ -30,7 +26,8 @@ namespace HydroNotifier.FunctionApp
                 log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
                 var stateService = new StateService(executionContext.FunctionDirectory);
                 var settingsService = new SettingsService();
-                var hg = new HydroGuard(message, stateService, settingsService, log);
+
+                var hg = new HydroGuard(out message, stateService, settingsService, log);
                 Task.Run(() => hg.Do());
             }
             catch (Exception ex)
@@ -39,4 +36,6 @@ namespace HydroNotifier.FunctionApp
             }
         }
     }
+
+
 }
