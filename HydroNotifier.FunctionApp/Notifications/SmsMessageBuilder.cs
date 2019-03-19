@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using HydroNotifier.FunctionApp.Core;
+﻿using HydroNotifier.FunctionApp.Core;
 using Nexmo.Api;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Convert = HydroNotifier.FunctionApp.Utils.Convert;
 
 namespace HydroNotifier.FunctionApp.Notifications
@@ -16,7 +17,7 @@ namespace HydroNotifier.FunctionApp.Notifications
             string stateName = Convert.StatusToText(currentStatus);
             double flowSum = data.Sum(p => p.FlowLitersPerSecond);
 
-            string message = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp}, Prutok: {flowSum} l/s";
+            string message = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp.ToString(CultureInfo.CreateSpecificCulture("cs-CZ"))}, Prutok: {flowSum} l/s";
 
             request.from = "HydroNotifier";
             request.to = smsTo;
