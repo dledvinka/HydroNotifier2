@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28711.60
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HydroNotifier.FunctionApp", "HydroNotifier.FunctionApp\HydroNotifier.FunctionApp.csproj", "{006F05DB-4321-456B-8261-CF18B0654127}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HydroNotifier.Tests", "HydroNotifier.Tests\HydroNotifier.Tests.csproj", "{0503D482-DACD-40F9-80E7-2433BE5AAC9C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HydroNotifier.Tests", "HydroNotifier.Tests\HydroNotifier.Tests.csproj", "{7ACBEBBB-2B08-4B1A-9E40-F69F545D6069}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{006F05DB-4321-456B-8261-CF18B0654127}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{006F05DB-4321-456B-8261-CF18B0654127}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{006F05DB-4321-456B-8261-CF18B0654127}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0503D482-DACD-40F9-80E7-2433BE5AAC9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0503D482-DACD-40F9-80E7-2433BE5AAC9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0503D482-DACD-40F9-80E7-2433BE5AAC9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0503D482-DACD-40F9-80E7-2433BE5AAC9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7ACBEBBB-2B08-4B1A-9E40-F69F545D6069}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ACBEBBB-2B08-4B1A-9E40-F69F545D6069}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ACBEBBB-2B08-4B1A-9E40-F69F545D6069}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ACBEBBB-2B08-4B1A-9E40-F69F545D6069}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
