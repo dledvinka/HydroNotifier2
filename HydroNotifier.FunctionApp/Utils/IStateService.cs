@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using HydroNotifier.FunctionApp.Core;
 
-namespace HydroNotifier.Core
+namespace HydroNotifier.FunctionApp.Utils
 {
     public interface IStateService
     {

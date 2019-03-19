@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28711.60
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HydroNotifier.Core", "HydroNotifier.Core\HydroNotifier.Core.csproj", "{DCE99F1C-395B-46CE-B899-8971187E80A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HydroNotifier.FunctionApp", "HydroNotifier.FunctionApp\HydroNotifier.FunctionApp.csproj", "{006F05DB-4321-456B-8261-CF18B0654127}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HydroNotifier.FunctionApp", "HydroNotifier.FunctionApp\HydroNotifier.FunctionApp.csproj", "{006F05DB-4321-456B-8261-CF18B0654127}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HydroNotifier.Tests", "HydroNotifier.Tests\HydroNotifier.Tests.csproj", "{0503D482-DACD-40F9-80E7-2433BE5AAC9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HydroNotifier.Tests", "HydroNotifier.Tests\HydroNotifier.Tests.csproj", "{0503D482-DACD-40F9-80E7-2433BE5AAC9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DCE99F1C-395B-46CE-B899-8971187E80A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DCE99F1C-395B-46CE-B899-8971187E80A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DCE99F1C-395B-46CE-B899-8971187E80A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DCE99F1C-395B-46CE-B899-8971187E80A6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{006F05DB-4321-456B-8261-CF18B0654127}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{006F05DB-4321-456B-8261-CF18B0654127}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{006F05DB-4321-456B-8261-CF18B0654127}.Release|Any CPU.ActiveCfg = Release|Any CPU

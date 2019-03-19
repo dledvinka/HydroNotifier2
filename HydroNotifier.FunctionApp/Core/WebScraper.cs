@@ -1,14 +1,11 @@
-﻿using HtmlAgilityPack;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
+using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 
-namespace HydroNotifier.Core
+namespace HydroNotifier.FunctionApp.Core
 {
     public class WebScraper
     {

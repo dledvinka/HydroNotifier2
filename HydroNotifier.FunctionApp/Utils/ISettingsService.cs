@@ -1,4 +1,4 @@
-﻿namespace HydroNotifier.Core
+﻿namespace HydroNotifier.FunctionApp.Utils
 {
     public interface ISettingsService
     {

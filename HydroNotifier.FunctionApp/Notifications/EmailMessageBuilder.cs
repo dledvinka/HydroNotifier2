@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using HydroNotifier.FunctionApp.Core;
+using HydroNotifier.FunctionApp.Utils;
 using SendGrid.Helpers.Mail;
+using Convert = HydroNotifier.FunctionApp.Utils.Convert;
 
-namespace HydroNotifier.Core
+namespace HydroNotifier.FunctionApp.Notifications
 {
     internal class EmailMessageBuilder
     {
@@ -12,15 +16,17 @@ namespace HydroNotifier.Core
             _settingsService = settingsService;
         }
 
-        public SendGrid.Helpers.Mail.SendGridMessage BuildMessage(HydroData lomnaData, HydroData olseData, HydroStatus currentStatus, in DateTime stateChangedTimeStamp)
+        public SendGrid.Helpers.Mail.SendGridMessage BuildMessage(List<HydroData> data, HydroStatus currentStatus, in DateTime stateChangedTimeStamp)
         {
             var emailMessage = new SendGrid.Helpers.Mail.SendGridMessage();
 
             string stateName = Convert.StatusToText(currentStatus);
-            string message =
-                $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp}\n\n" +
-                $"{lomnaData.RiverName}: {lomnaData.FlowLitresPerSecond} l/s v {lomnaData.Timestamp}\n" +
-                $"{olseData.RiverName}: {olseData.FlowLitresPerSecond} l/s v {olseData.Timestamp}";
+            string message = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp}\n\n";
+
+            foreach (var hydroData in data)
+            {
+                message += $"{hydroData.RiverName}: {hydroData.FlowLitresPerSecond} l/s v {hydroData.Timestamp}\n";
+            }
 
             emailMessage.Subject = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp}";
             emailMessage.PlainTextContent = message;
