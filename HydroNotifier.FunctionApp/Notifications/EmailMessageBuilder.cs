@@ -25,7 +25,7 @@ namespace HydroNotifier.FunctionApp.Notifications
 
             foreach (var hydroData in data)
             {
-                message += $"{hydroData.RiverName}: {hydroData.FlowLitresPerSecond} l/s v {hydroData.Timestamp}\n";
+                message += $"{hydroData.RiverName}: {hydroData.FlowLitresPerSecond} l/s v {hydroData.Timestamp}\n\n";
             }
 
             emailMessage.Subject = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp}";
