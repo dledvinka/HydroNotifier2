@@ -1,10 +1,9 @@
-﻿using NUnit.Framework;
+﻿using HydroNotifier.FunctionApp.Core;
+using HydroNotifier.FunctionApp.Notifications;
+using NUnit.Framework;
+using NUnit.Framework.Internal;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using HydroNotifier.FunctionApp.Core;
-using HydroNotifier.FunctionApp.Notifications;
-using NUnit.Framework.Internal;
 
 namespace HydroNotifier.Tests
 {
@@ -20,7 +19,7 @@ namespace HydroNotifier.Tests
         public void BuildMessage_HighFlow()
         {
             var builder = new SmsMessageBuilder();
-            var actual = builder.BuildMessage(_data, currentStatus: HydroStatus.High, new DateTime(2019, 1, 1, 13, 50, 30), "420735");
+            var actual = builder.BuildMessage(_data, HydroStatus.High, new DateTime(2019, 1, 1, 13, 50, 30), "420735");
 
             Assert.AreEqual("420735", actual.to);
             Assert.AreEqual("HydroNotifier", actual.from);
@@ -31,7 +30,7 @@ namespace HydroNotifier.Tests
         public void BuildMessage_LowFlow()
         {
             var builder = new SmsMessageBuilder();
-            var actual = builder.BuildMessage(_data, currentStatus: HydroStatus.Low, new DateTime(2019, 1, 1, 13, 50, 30), "420735");
+            var actual = builder.BuildMessage(_data, HydroStatus.Low, new DateTime(2019, 1, 1, 13, 50, 30), "420735");
 
             Assert.AreEqual("420735", actual.to);
             Assert.AreEqual("HydroNotifier", actual.from);
@@ -42,7 +41,7 @@ namespace HydroNotifier.Tests
         public void BuildMessage_NormalFlow()
         {
             var builder = new SmsMessageBuilder();
-            var actual = builder.BuildMessage(_data, currentStatus: HydroStatus.Normal, new DateTime(2019, 1, 1, 13, 50, 30), "420735");
+            var actual = builder.BuildMessage(_data, HydroStatus.Normal, new DateTime(2019, 1, 1, 13, 50, 30), "420735");
 
             Assert.AreEqual("420735", actual.to);
             Assert.AreEqual("HydroNotifier", actual.from);
