@@ -35,7 +35,7 @@ namespace HydroNotifier.FunctionApp.Core
             var values = lastValueRow.SelectNodes("td");
             var date = values[0].InnerText;
             var flowLitersPerSecond = double.Parse(values[2].InnerText, NumberStyles.Any, CultureInfo.InvariantCulture) * 1000.0d;
-            _log.LogTrace($"Name = '{_query.Name}', Date = '{date}', FlowInLitersPerSecond = '{flowLitersPerSecond}'");
+            _log.LogInformation($"Name = '{_query.Name}', Date = '{date}', FlowInLitersPerSecond = '{flowLitersPerSecond}'");
 
             return new HydroData(_query.Name, date, flowLitersPerSecond);
         }

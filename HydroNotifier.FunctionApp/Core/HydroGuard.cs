@@ -38,42 +38,60 @@ namespace HydroNotifier.FunctionApp.Core
             }
 
             var lastReportedStatus = _stateService.GetStatus();
+            _log.LogInformation($"Previous status: {lastReportedStatus}");
             HydroStatus currentStatus = new HydroStatusCalculator().GetCurrentStatus(hydroData, lastReportedStatus) ;
-
-            _log.LogTrace($"Previous state: {lastReportedStatus}, current state: {currentStatus}");
+            _log.LogInformation($"Current status: {currentStatus}");
             bool statusChanged = currentStatus != lastReportedStatus;
             if (statusChanged)
             {
-                bool notificationsSent = SendNotifications(currentStatus, hydroData);
+                _log.LogInformation($"Status change detected, sending notifications...");
+                bool notificationsSent = await SendNotificationsAsync(currentStatus, hydroData);
 
                 if (notificationsSent)
                 {
                     _stateService.SetStatus(currentStatus);
+                    _log.LogInformation($"Persisted status set to: {currentStatus}");
                 }
             }
         }
 
-        private bool SendNotifications(HydroStatus currentStatus, List<HydroData> data)
+        private async Task<bool> SendNotificationsAsync(HydroStatus currentStatus, List<HydroData> data)
         {
-            SendEmailNotification(currentStatus, data, _log);
-            return SendSmsNotification(currentStatus, data, _log);
+            try
+            {
+                await SendEmailNotificationAsync(currentStatus, data);
+                _log.LogInformation("Email notification sent");
+                SendSmsNotification(currentStatus, data);
+                _log.LogInformation("SMS notification sent");
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "Error during sending notifications");
+                return false;
+            }
+
+            return true;
         }
 
-        private void SendEmailNotification(HydroStatus currentStatus, List<HydroData> data, ILogger log)
+        private async Task SendEmailNotificationAsync(HydroStatus currentStatus, List<HydroData> data)
         {
             var message = new EmailMessageBuilder(_settingsService)
                 .BuildMessage(data, currentStatus, DateTime.Now);
 
-            _messages.AddAsync(message);
+            _log.LogInformation($"Email message: {message}");
+
+            await _messages.AddAsync(message);
         }
 
-        private bool SendSmsNotification(HydroStatus currentStatus, List<HydroData> data, ILogger log)
+        private void SendSmsNotification(HydroStatus currentStatus, List<HydroData> data)
         {
             var message = new SmsMessageBuilder()
                 .BuildMessage(data, currentStatus, DateTime.Now, _settingsService.SmsTo);
 
+            _log.LogInformation($"SMS message: {message}");
+
             var smsNotifier = new SmsNotifier(_settingsService, _log);
-            return smsNotifier.SendSmsNotification(message);
+            smsNotifier.SendSmsNotification(message);
         }
     }
 }
