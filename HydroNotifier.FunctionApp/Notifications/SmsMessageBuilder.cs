@@ -17,7 +17,7 @@ namespace HydroNotifier.FunctionApp.Notifications
             string stateName = Convert.StatusToText(currentStatus);
             double flowSum = data.Sum(p => p.FlowLitersPerSecond);
 
-            string message = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp.ToString(CultureInfo.CreateSpecificCulture("cs-CZ"))}, Prutok: {flowSum} l/s";
+            string message = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp.ToString(CultureInfo.CreateSpecificCulture("cs-CZ"))}, Prutok: {flowSum.ToString(CultureInfo.CreateSpecificCulture("cs-CZ"))} l/s";
 
             request.from = "HydroNotifier";
             request.to = smsTo;
