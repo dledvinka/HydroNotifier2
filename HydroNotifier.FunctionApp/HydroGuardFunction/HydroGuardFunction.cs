@@ -1,6 +1,7 @@
 using System;
 using HydroNotifier.FunctionApp.Core;
 using HydroNotifier.FunctionApp.Utils;
+using Microsoft.ApplicationInsights;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using SendGrid.Helpers.Mail;
@@ -22,8 +23,9 @@ namespace HydroNotifier.FunctionApp
                 log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
                 var stateService = new StateService(executionContext.FunctionDirectory);
                 var settingsService = new SettingsService();
+                var telemetry = new ApplicationInsightsTelemetry();
 
-                var hg = new HydroGuard(messageCollector, stateService, settingsService, log);
+                var hg = new HydroGuard(messageCollector, stateService, settingsService, log, telemetry);
                 await hg.DoAsync();
                 await messageCollector.FlushAsync();
                 log.LogInformation("Done.");

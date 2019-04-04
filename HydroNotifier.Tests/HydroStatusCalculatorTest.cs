@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using HydroNotifier.FunctionApp.Core;
+using HydroNotifier.FunctionApp.Utils;
 using NUnit.Framework;
+using Simple.Mocking;
 
 namespace HydroNotifier.Tests
 {
@@ -26,10 +28,12 @@ namespace HydroNotifier.Tests
             new HydroData(string.Empty, string.Empty, 20000.0),
         };
 
+        private readonly ITelemetry _telemetry = Stub.Interface<ITelemetry>();
+
         [Test]
         public void GetCurrentStatus_UnknownToLow()
         {
-            var calc = new HydroStatusCalculator();
+            var calc = new HydroStatusCalculator(_telemetry);
             var actual = calc.GetCurrentStatus(_lowFlowData, HydroStatus.Unknown);
             Assert.AreEqual(HydroStatus.Low, actual);
         }
@@ -37,7 +41,7 @@ namespace HydroNotifier.Tests
         [Test]
         public void GetCurrentStatus_UnknownToNormal()
         {
-            var calc = new HydroStatusCalculator();
+            var calc = new HydroStatusCalculator(_telemetry);
             var actual = calc.GetCurrentStatus(_normalFlowData, HydroStatus.Unknown);
             Assert.AreEqual(HydroStatus.Normal, actual);
         }
@@ -45,7 +49,7 @@ namespace HydroNotifier.Tests
         [Test]
         public void GetCurrentStatus_UnknownToHigh()
         {
-            var calc = new HydroStatusCalculator();
+            var calc = new HydroStatusCalculator(_telemetry);
             var actual = calc.GetCurrentStatus(_highFlowData, HydroStatus.Unknown);
             Assert.AreEqual(HydroStatus.High, actual);
         }
@@ -53,7 +57,7 @@ namespace HydroNotifier.Tests
         [Test]
         public void GetCurrentStatus_LowToNormal()
         {
-            var calc = new HydroStatusCalculator();
+            var calc = new HydroStatusCalculator(_telemetry);
             var actual = calc.GetCurrentStatus(_normalFlowData, HydroStatus.Low);
             Assert.AreEqual(HydroStatus.Normal, actual);
         }
@@ -61,7 +65,7 @@ namespace HydroNotifier.Tests
         [Test]
         public void GetCurrentStatus_LowToHigh()
         {
-            var calc = new HydroStatusCalculator();
+            var calc = new HydroStatusCalculator(_telemetry);
             var actual = calc.GetCurrentStatus(_highFlowData, HydroStatus.Low);
             Assert.AreEqual(HydroStatus.High, actual);
         }
@@ -69,7 +73,7 @@ namespace HydroNotifier.Tests
         [Test]
         public void GetCurrentStatus_NormalToLow()
         {
-            var calc = new HydroStatusCalculator();
+            var calc = new HydroStatusCalculator(_telemetry);
             var actual = calc.GetCurrentStatus(_lowFlowData, HydroStatus.Normal);
             Assert.AreEqual(HydroStatus.Low, actual);
         }
@@ -77,7 +81,7 @@ namespace HydroNotifier.Tests
         [Test]
         public void GetCurrentStatus_NormalToHigh()
         {
-            var calc = new HydroStatusCalculator();
+            var calc = new HydroStatusCalculator(_telemetry);
             var actual = calc.GetCurrentStatus(_highFlowData, HydroStatus.Normal);
             Assert.AreEqual(HydroStatus.High, actual);
         }
@@ -85,7 +89,7 @@ namespace HydroNotifier.Tests
         [Test]
         public void GetCurrentStatus_HighToLow()
         {
-            var calc = new HydroStatusCalculator();
+            var calc = new HydroStatusCalculator(_telemetry);
             var actual = calc.GetCurrentStatus(_lowFlowData, HydroStatus.High);
             Assert.AreEqual(HydroStatus.Low, actual);
         }
@@ -93,7 +97,7 @@ namespace HydroNotifier.Tests
         [Test]
         public void GetCurrentStatus_HighToNormal()
         {
-            var calc = new HydroStatusCalculator();
+            var calc = new HydroStatusCalculator(_telemetry);
             var actual = calc.GetCurrentStatus(_normalFlowData, HydroStatus.High);
             Assert.AreEqual(HydroStatus.Normal, actual);
         }

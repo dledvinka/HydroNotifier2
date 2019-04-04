@@ -15,16 +15,19 @@ namespace HydroNotifier.FunctionApp.Core
         private static readonly HydroQuery _lomnaQuery = new HydroQuery("Lomná", "http://hydro.chmi.cz/hpps/popup_hpps_prfdyn.php?seq=307326");
         private static readonly HydroQuery _olseQuery = new HydroQuery("Olše", "http://hydro.chmi.cz/hpps/popup_hpps_prfdyn.php?seq=307325");
         private readonly ILogger _log;
+        private readonly ITelemetry _tc;
         private readonly IAsyncCollector<SendGridMessage> _messages;
         private readonly IStateService _stateService;
         private readonly ISettingsService _settingsService;
 
-        public HydroGuard(IAsyncCollector<SendGridMessage> messages, IStateService stateService, ISettingsService settingsService, ILogger log)
+        public HydroGuard(IAsyncCollector<SendGridMessage> messages, IStateService stateService,
+            ISettingsService settingsService, ILogger log, ITelemetry tc)
         {
             _messages = messages;
             _stateService = stateService;
             _settingsService = settingsService;
             _log = log;
+            _tc = tc;
         }
 
         public async Task DoAsync()
@@ -39,7 +42,7 @@ namespace HydroNotifier.FunctionApp.Core
 
             var lastReportedStatus = _stateService.GetStatus();
             _log.LogInformation($"Previous status: {lastReportedStatus}");
-            HydroStatus currentStatus = new HydroStatusCalculator().GetCurrentStatus(hydroData, lastReportedStatus) ;
+            HydroStatus currentStatus = new HydroStatusCalculator(_tc).GetCurrentStatus(hydroData, lastReportedStatus) ;
             _log.LogInformation($"Current status: {currentStatus}");
             bool statusChanged = currentStatus != lastReportedStatus;
             if (statusChanged)
