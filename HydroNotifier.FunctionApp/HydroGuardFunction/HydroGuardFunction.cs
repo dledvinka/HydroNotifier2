@@ -1,7 +1,6 @@
 using System;
 using HydroNotifier.FunctionApp.Core;
 using HydroNotifier.FunctionApp.Utils;
-using Microsoft.ApplicationInsights;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using SendGrid.Helpers.Mail;

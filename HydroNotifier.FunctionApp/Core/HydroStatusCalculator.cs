@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using HydroNotifier.FunctionApp.Utils;
 
 namespace HydroNotifier.FunctionApp.Core
@@ -38,18 +36,15 @@ namespace HydroNotifier.FunctionApp.Core
                 status = HydroStatus.Normal;
             }
 
-            ReportMetrics(status, flowSum);
+            ReportTelemetry(status, flowSum);
 
-            return lastReportedStatus;
+            return status;
         }
 
-        private void ReportMetrics(HydroStatus status, double flowSum)
+        private void ReportTelemetry(HydroStatus status, double flowSum)
         {
-            var properties = new Dictionary<string, string>
-            {
-                {"Status", status.ToString()}
-            };
-            _tc.TrackMetric("FlowSum", flowSum, properties);
+            _tc.TrackMetric("FlowSum", flowSum);
+            _tc.TrackMetric("HydroStatus", (double)status);
         }
     }
 }
