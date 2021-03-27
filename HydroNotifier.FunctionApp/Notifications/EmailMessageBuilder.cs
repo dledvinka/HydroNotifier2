@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HydroNotifier.FunctionApp.Core;
 using HydroNotifier.FunctionApp.Utils;
 using SendGrid.Helpers.Mail;
@@ -18,6 +19,7 @@ namespace HydroNotifier.FunctionApp.Notifications
 
         public SendGridMessage BuildMessage(List<HydroData> data, HydroStatus currentStatus, DateTime stateChangedTimeStamp)
         {
+            var targetEmails = _settingsService.EmailTo.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToList();
             var emailMessage = new SendGridMessage();
 
             string stateName = Convert.StatusToText(currentStatus);
@@ -30,8 +32,7 @@ namespace HydroNotifier.FunctionApp.Notifications
 
             emailMessage.Subject = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp}";
             emailMessage.PlainTextContent = message;
-            emailMessage.AddTo("AmilanD@seznam.cz");
-            emailMessage.AddTo("david.ledvinka@post.cz");
+            targetEmails.ForEach(te => emailMessage.AddTo(te));
             emailMessage.From = new EmailAddress("hydronotifier@no-reply.com", "HydroNotifier");
 
             return emailMessage;
