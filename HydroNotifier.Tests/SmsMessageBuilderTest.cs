@@ -11,8 +11,8 @@ namespace HydroNotifier.Tests
     {
         private readonly List<HydroData> _data = new List<HydroData>()
         {
-            new HydroData("Řeka 1", new DateTime(2019, 1, 1, 13, 50, 20).ToString(), 2000.0),
-            new HydroData("Řeka 2", new DateTime(2019, 1, 1, 13, 50, 20).ToString(), 3000.1)
+            new HydroData("Řeka 1", new DateTime(2019, 1, 1, 13, 50, 20).ToString(), 2000.0M),
+            new HydroData("Řeka 2", new DateTime(2019, 1, 1, 13, 50, 20).ToString(), 3000.1M)
         };
 
         [Test]

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Data.Tables" Version="12.0.0-beta.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HydroNotifier.FunctionApp\HydroNotifier.FunctionApp.csproj" />
+  </ItemGroup>
+
+</Project>

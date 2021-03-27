@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using HydroNotifier.FunctionApp.Notifications;
+using HydroNotifier.FunctionApp.Storage;
 using HydroNotifier.FunctionApp.Utils;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
@@ -16,13 +17,15 @@ namespace HydroNotifier.FunctionApp.Core
         private static readonly HydroQuery _olseQuery = new HydroQuery("Olše", "http://hydro.chmi.cz/hpps/popup_hpps_prfdyn.php?seq=307325");
         private readonly ILogger _log;
         private readonly ITelemetry _tc;
+        private readonly ITableService _tableService;
         private readonly IAsyncCollector<SendGridMessage> _messages;
         private readonly IStateService _stateService;
         private readonly ISettingsService _settingsService;
 
-        public HydroGuard(IAsyncCollector<SendGridMessage> messages, IStateService stateService,
+        public HydroGuard(ITableService tableService, IAsyncCollector<SendGridMessage> messages, IStateService stateService,
             ISettingsService settingsService, ILogger log, ITelemetry tc)
         {
+            _tableService = tableService;
             _messages = messages;
             _stateService = stateService;
             _settingsService = settingsService;
@@ -40,6 +43,8 @@ namespace HydroNotifier.FunctionApp.Core
                 hydroData.Add(await new WebScraper(_olseQuery, client, _log).GetLatestValuesAsync());
             }
 
+            AddToStorage(hydroData);
+
             var lastReportedStatus = _stateService.GetStatus();
             _log.LogInformation($"Previous status: {lastReportedStatus}");
             HydroStatus currentStatus = new HydroStatusCalculator(_tc).GetCurrentStatus(hydroData, lastReportedStatus) ;
@@ -55,6 +60,23 @@ namespace HydroNotifier.FunctionApp.Core
                     _stateService.SetStatus(currentStatus);
                     _log.LogInformation($"Persisted status set to: {currentStatus}");
                 }
+            }
+        }
+
+        private void AddToStorage(List<HydroData> hydroData)
+        {
+            foreach (var hd in hydroData)
+            {
+                var fde = new FlowDataEntity()
+                {
+                    PartitionKey = "P",
+                    RowKey = Guid.NewGuid().ToString(),
+                    RiverName = hd.RiverName,
+                    Timestamp = DateTime.UtcNow,
+                    FlowLitersPerSecond = hd.FlowLitersPerSecond
+                };
+
+                _tableService.AddEntity(fde);
             }
         }
 
