@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using HydroNotifier.FunctionApp.Core;
 using HydroNotifier.FunctionApp.Notifications;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SendGrid.Helpers.Mail;
 
 namespace HydroNotifier.FunctionApp.Functions
@@ -40,7 +40,8 @@ namespace HydroNotifier.FunctionApp.Functions
                 var message = new EmailMessageBuilder(settingsService, log)
                     .BuildMessage(data, currentStatus, DateTime.Now);
 
-                log.LogInformation($"Email message: {message}");
+                string jsonString = JsonSerializer.Serialize(message);
+                log.LogInformation($"Email message: {jsonString}");
 
                 await messageCollector.AddAsync(message);
                 await messageCollector.FlushAsync();
@@ -48,7 +49,8 @@ namespace HydroNotifier.FunctionApp.Functions
                 var smsMessage = new SmsMessageBuilder()
                     .BuildMessage(data, currentStatus, DateTime.Now, settingsService.SmsTo);
 
-                log.LogInformation($"SMS message: {message}");
+                jsonString = JsonSerializer.Serialize(smsMessage);
+                log.LogInformation($"SMS message: {jsonString}");
 
                 var smsNotifier = new SmsNotifier(settingsService, log);
                 smsNotifier.SendSmsNotification(smsMessage);
