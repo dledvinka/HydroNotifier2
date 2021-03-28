@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -16,19 +17,28 @@ namespace HydroNotifier.FunctionApp.Functions
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            log.LogInformation("HttpTrigger => HttpGetStatusFunction");
+            try
+            {
 
-            string name = req.Query["name"];
+                log.LogInformation("HttpTrigger => HttpGetStatusFunction");
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
+                string name = req.Query["name"];
 
-            string responseMessage = string.IsNullOrEmpty(name)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {name}. This HTTP triggered function executed successfully.";
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                dynamic data = JsonConvert.DeserializeObject(requestBody);
+                name = name ?? data?.name;
 
-            return new OkObjectResult(responseMessage);
+                string responseMessage = string.IsNullOrEmpty(name)
+                    ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
+                    : $"Hello, {name}. This HTTP triggered function executed successfully.";
+
+                return new OkObjectResult(responseMessage);
+            }
+            catch (Exception ex)
+            {
+                log.LogCritical(ex, $"Exception found {ex.Message}");
+                return new BadRequestResult();
+            }
         }
     }
 }

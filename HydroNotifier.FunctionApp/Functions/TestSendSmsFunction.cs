@@ -24,36 +24,44 @@ namespace HydroNotifier.FunctionApp.Functions
             ExecutionContext executionContext,
             ILogger log)
         {
-            log.LogInformation("HttpTrigger => TestSendSmsFunction");
-            var settingsService = new SettingsService();
+            try
+            {
+                log.LogInformation("HttpTrigger => TestSendSmsFunction");
+                var settingsService = new SettingsService();
 
-            List<HydroData> data = new List<HydroData>()
+                List<HydroData> data = new List<HydroData>()
             {
                 new HydroData("TestRiverName1", DateTime.UtcNow.ToString(), 50.0M),
                 new HydroData("TestRiverName2", DateTime.UtcNow.ToString(), 60.0M),
             };
 
-            var currentStatus = HydroStatus.Normal;
+                var currentStatus = HydroStatus.Normal;
 
-            var message = new EmailMessageBuilder(settingsService)
-                .BuildMessage(data, currentStatus, DateTime.Now);
+                var message = new EmailMessageBuilder(settingsService)
+                    .BuildMessage(data, currentStatus, DateTime.Now);
 
-            log.LogInformation($"Email message: {message}");
+                log.LogInformation($"Email message: {message}");
 
-            await messageCollector.AddAsync(message);
-            await messageCollector.FlushAsync();
+                await messageCollector.AddAsync(message);
+                await messageCollector.FlushAsync();
 
-            var smsMessage = new SmsMessageBuilder()
-                .BuildMessage(data, currentStatus, DateTime.Now, settingsService.SmsTo);
+                var smsMessage = new SmsMessageBuilder()
+                    .BuildMessage(data, currentStatus, DateTime.Now, settingsService.SmsTo);
 
-            log.LogInformation($"SMS message: {message}");
+                log.LogInformation($"SMS message: {message}");
 
-            var smsNotifier = new SmsNotifier(settingsService, log);
-            smsNotifier.SendSmsNotification(smsMessage);
+                var smsNotifier = new SmsNotifier(settingsService, log);
+                smsNotifier.SendSmsNotification(smsMessage);
 
-            string responseMessage = "Both notifications sent";
+                string responseMessage = "Both notifications sent";
 
-            return new OkObjectResult(responseMessage);
+                return new OkObjectResult(responseMessage);
+            }
+            catch (Exception ex)
+            {
+                log.LogCritical(ex, $"Exception found {ex.Message}");
+                return new BadRequestResult();
+            }
         }
     }
 }
