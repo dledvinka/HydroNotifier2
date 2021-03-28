@@ -9,15 +9,15 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using SendGrid.Helpers.Mail;
 
-namespace HydroNotifier.FunctionApp
+namespace HydroNotifier.FunctionApp.Functions
 {
     public static class HydroGuardFunction
     {
         [FunctionName("HydroGuardTimerFunction")]
         public static async void Run(
-            [TimerTrigger("*/10 * * * * *")]TimerInfo myTimer,
+            //[TimerTrigger("*/10 * * * * *")]TimerInfo myTimer,
             //[Table("HydroNotifierFlowData", Connection = "DefaultEndpointsProtocol=https;AccountName=hydronotifierfunctionapp;AccountKey=b6/bnGXZI3Gh1Jh5ScaKNboMAZCYbDwv/PYJpGemcOf31JlzjhgZOlVfqkJ2VioOIhKCNk5C8fZYZsnUMrxE9w==;EndpointSuffix=core.windows.net")]
-            //[TimerTrigger("0 0 * * * *")]TimerInfo myTimer,
+            [TimerTrigger("0 0 * * * *")]TimerInfo myTimer,
             [SendGrid] IAsyncCollector<SendGridMessage> messageCollector,
             ILogger log,
             ExecutionContext executionContext)
