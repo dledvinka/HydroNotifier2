@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using HydroNotifier.FunctionApp.Notifications;
 using HydroNotifier.FunctionApp.Storage;
@@ -100,10 +101,11 @@ namespace HydroNotifier.FunctionApp.Core
 
         private async Task SendEmailNotificationAsync(HydroStatus currentStatus, List<HydroData> data)
         {
-            var message = new EmailMessageBuilder(_settingsService)
+            var message = new EmailMessageBuilder(_settingsService, _log)
                 .BuildMessage(data, currentStatus, DateTime.Now);
 
-            _log.LogInformation($"Email message: {message}");
+            string jsonString = JsonSerializer.Serialize(message);
+            _log.LogInformation($"Email message: {jsonString}");
 
             await _messages.AddAsync(message);
         }
@@ -113,7 +115,8 @@ namespace HydroNotifier.FunctionApp.Core
             var message = new SmsMessageBuilder()
                 .BuildMessage(data, currentStatus, DateTime.Now, _settingsService.SmsTo);
 
-            _log.LogInformation($"SMS message: {message}");
+            string jsonString = JsonSerializer.Serialize(message);
+            _log.LogInformation($"SMS message: {jsonString}");
 
             var smsNotifier = new SmsNotifier(_settingsService, _log);
             smsNotifier.SendSmsNotification(message);

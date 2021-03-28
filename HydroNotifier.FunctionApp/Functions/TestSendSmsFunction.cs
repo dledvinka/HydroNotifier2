@@ -37,7 +37,7 @@ namespace HydroNotifier.FunctionApp.Functions
 
                 var currentStatus = HydroStatus.Normal;
 
-                var message = new EmailMessageBuilder(settingsService)
+                var message = new EmailMessageBuilder(settingsService, log)
                     .BuildMessage(data, currentStatus, DateTime.Now);
 
                 log.LogInformation($"Email message: {message}");

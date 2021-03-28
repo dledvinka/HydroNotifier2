@@ -26,7 +26,7 @@ namespace HydroNotifier.FunctionApp.Storage
                 tableName,
                 new TableSharedKeyCredential(accountName, storageAccountKey));
 
-            tableClient.CreateIfNotExists();
+            //tableClient.CreateIfNotExists();
 
             return new TableService(tableClient);
         }
