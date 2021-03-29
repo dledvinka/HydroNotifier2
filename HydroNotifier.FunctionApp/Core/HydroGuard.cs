@@ -44,8 +44,6 @@ namespace HydroNotifier.FunctionApp.Core
                 hydroData.Add(await new WebScraper(_olseQuery, client, _log).GetLatestValuesAsync());
             }
 
-            AddToStorage(hydroData);
-
             var lastReportedStatus = _stateService.GetStatus();
             _log.LogInformation($"Previous status: {lastReportedStatus}");
             HydroStatus currentStatus = new HydroStatusCalculator(_tc).GetCurrentStatus(hydroData, lastReportedStatus) ;
@@ -62,16 +60,19 @@ namespace HydroNotifier.FunctionApp.Core
                     _log.LogInformation($"Persisted status set to: {currentStatus}");
                 }
             }
+
+            AddToStorage(hydroData);
         }
 
         private void AddToStorage(List<HydroData> hydroData)
         {
-            foreach (var hd in hydroData)
-            {
-                var fde = new FlowDataEntity()
+            var fde = new FlowDataEntity()
                 {
                     PartitionKey = "P",
                     RowKey = Guid.NewGuid().ToString(),
+                    LomnaFlowLitersPerSecond = hydroData[0].FlowLitersPerSecond,
+                    OlseFlowLitersPerSecond = hydroData[1].FlowLitersPerSecond,
+                    
                     RiverName = hd.RiverName,
                     Timestamp = DateTime.UtcNow,
                     FlowLitersPerSecond = hd.FlowLitersPerSecond
