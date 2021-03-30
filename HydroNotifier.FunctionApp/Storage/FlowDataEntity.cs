@@ -15,8 +15,8 @@ namespace HydroNotifier.FunctionApp.Storage
         public bool EmailNotificationSent { get; set; }
         public string EmailNotificationJson { get; set; }
         public bool SmsNotificationSent { get; set; }
-        public string SmsNotificationText { get; set; }
-        public decimal NexmoCreditRemaining { get; set; }
+        public string SmsNotificationJson { get; set; }
+        public string NexmoRemainingBalanceEur { get; set; }
         public string PartitionKey { get; set; }
         public string RowKey { get; set; }
         public DateTimeOffset? Timestamp { get; set; }

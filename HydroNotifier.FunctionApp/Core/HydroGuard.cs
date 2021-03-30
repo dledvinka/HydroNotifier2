@@ -36,6 +36,8 @@ namespace HydroNotifier.FunctionApp.Core
 
         public async Task DoAsync()
         {
+            bool notificationsSent;
+            string emailJson = string.Empty, smsJson = string.Empty, remainingBalanceEur = string.Empty;
             List<HydroData> hydroData = new List<HydroData>();
 
             using (HttpClient client = new HttpClient())
@@ -52,7 +54,7 @@ namespace HydroNotifier.FunctionApp.Core
             if (statusChanged)
             {
                 _log.LogInformation($"Status change detected, sending notifications...");
-                bool notificationsSent = await SendNotificationsAsync(currentStatus, hydroData);
+                (notificationsSent, emailJson, smsJson, remainingBalanceEur) = await SendNotificationsAsync(currentStatus, hydroData);
 
                 if (notificationsSent)
                 {
@@ -61,46 +63,49 @@ namespace HydroNotifier.FunctionApp.Core
                 }
             }
 
-            AddToStorage(hydroData);
+            AddToStorage(hydroData, emailJson, smsJson, remainingBalanceEur);
         }
 
-        private void AddToStorage(List<HydroData> hydroData)
+        private void AddToStorage(List<HydroData> hydroData, string emailJson, string smsJson, string nexmoRemainingBalanceEur)
         {
             var fde = new FlowDataEntity()
-                {
-                    PartitionKey = "P",
-                    RowKey = Guid.NewGuid().ToString(),
-                    LomnaFlowLitersPerSecond = hydroData[0].FlowLitersPerSecond,
-                    OlseFlowLitersPerSecond = hydroData[1].FlowLitersPerSecond,
-                    
-                    RiverName = hd.RiverName,
-                    Timestamp = DateTime.UtcNow,
-                    FlowLitersPerSecond = hd.FlowLitersPerSecond
-                };
+            {
+                PartitionKey = "Data",
+                RowKey = Guid.NewGuid().ToString(),
+                LomnaFlowLitersPerSecond = hydroData[0].FlowLitersPerSecond,
+                OlseFlowLitersPerSecond = hydroData[1].FlowLitersPerSecond,
+                EmailNotificationSent = string.IsNullOrWhiteSpace(emailJson),
+                EmailNotificationJson = emailJson,
+                SmsNotificationSent = string.IsNullOrWhiteSpace(smsJson),
+                SmsNotificationJson = smsJson,
+                NexmoRemainingBalanceEur = nexmoRemainingBalanceEur,
+                Timestamp = DateTime.UtcNow
+            };
 
-                _tableService.AddEntity(fde);
-            }
+            _tableService.AddEntity(fde);
         }
 
-        private async Task<bool> SendNotificationsAsync(HydroStatus currentStatus, List<HydroData> data)
+        private async Task<(bool notificationsSent, string emailJson, string smsJson, string remainingBalanceEur)> SendNotificationsAsync(HydroStatus currentStatus, List<HydroData> data)
         {
+            string emailJson, smsJson, remainingBalanceEur;
+            
             try
             {
-                await SendEmailNotificationAsync(currentStatus, data);
+                emailJson = await SendEmailNotificationAsync(currentStatus, data);
                 _log.LogInformation("Email notification sent");
-                SendSmsNotification(currentStatus, data);
+                (smsJson, remainingBalanceEur) = SendSmsNotification(currentStatus, data);
                 _log.LogInformation("SMS notification sent");
             }
             catch (Exception ex)
             {
                 _log.LogError(ex, "Error during sending notifications");
-                return false;
+                return (false, string.Empty, string.Empty, string.Empty);
             }
 
-            return true;
+            return (true, emailJson, smsJson, remainingBalanceEur);
         }
 
-        private async Task SendEmailNotificationAsync(HydroStatus currentStatus, List<HydroData> data)
+        private async Task<string> SendEmailNotificationAsync(HydroStatus currentStatus, List<HydroData> data)
         {
             var message = new EmailMessageBuilder(_settingsService, _log)
                 .BuildMessage(data, currentStatus, DateTime.Now);
@@ -109,9 +114,11 @@ namespace HydroNotifier.FunctionApp.Core
             _log.LogInformation($"Email message: {jsonString}");
 
             await _messages.AddAsync(message);
+            
+            return jsonString;
         }
 
-        private void SendSmsNotification(HydroStatus currentStatus, List<HydroData> data)
+        private (string jsonString, string remainingBalanceEur) SendSmsNotification(HydroStatus currentStatus, List<HydroData> data)
         {
             var message = new SmsMessageBuilder()
                 .BuildMessage(data, currentStatus, DateTime.Now, _settingsService.SmsTo);
@@ -120,7 +127,9 @@ namespace HydroNotifier.FunctionApp.Core
             _log.LogInformation($"SMS message: {jsonString}");
 
             var smsNotifier = new SmsNotifier(_settingsService, _log);
-            smsNotifier.SendSmsNotification(message);
+            string remainingBalanceEur = smsNotifier.SendSmsNotification(message);
+
+            return (jsonString, remainingBalanceEur);
         }
     }
 }

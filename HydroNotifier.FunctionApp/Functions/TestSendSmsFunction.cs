@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using HydroNotifier.FunctionApp.Core;
 using HydroNotifier.FunctionApp.Notifications;
+using HydroNotifier.FunctionApp.Storage;
 using HydroNotifier.FunctionApp.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +37,8 @@ namespace HydroNotifier.FunctionApp.Functions
                 new HydroData("TestRiverName2", DateTime.UtcNow.ToString(), 60.0M),
             };
 
+                var tableService = TableService.Create();
+                var flowData = tableService.GetAll<FlowDataEntity>().OrderByDescending(e => e.Timestamp);
                 var currentStatus = HydroStatus.Normal;
 
                 var message = new EmailMessageBuilder(settingsService, log)

@@ -17,7 +17,7 @@ namespace HydroNotifier.FunctionApp.Notifications
             _log = log;
         }
 
-        public void SendSmsNotification(SMS.SMSRequest message)
+        public string SendSmsNotification(SMS.SMSRequest message)
         {
             var smsClient = new Nexmo.Api.Client(creds: new Nexmo.Api.Request.Credentials
             {
@@ -32,6 +32,10 @@ namespace HydroNotifier.FunctionApp.Notifications
             {
                 throw new InvalidOperationException($"Error during SMS send operation, result = {JsonConvert.SerializeObject(results)}");
             }
+
+            string remainingBalanceEur = results.messages[0].remaining_balance;
+
+            return remainingBalanceEur;
         }
     }
 }
