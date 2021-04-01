@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Azure.Data.Tables;
 using HydroNotifier.FunctionApp.Core;
 using HydroNotifier.FunctionApp.Storage;
 using HydroNotifier.FunctionApp.Utils;

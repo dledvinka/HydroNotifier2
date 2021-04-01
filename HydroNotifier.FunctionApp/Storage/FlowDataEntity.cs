@@ -1,25 +1,20 @@
-﻿using Azure;
-using Azure.Data.Tables;
-using HydroNotifier.FunctionApp.Core;
+﻿using HydroNotifier.FunctionApp.Core;
+using Microsoft.Azure.Cosmos.Table;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace HydroNotifier.FunctionApp.Storage
 {
-    public class FlowDataEntity : ITableEntity
+    public class FlowDataEntity : TableEntity
     {
-        public HydroStatus Status { get; set; }
-        public decimal OlseFlowLitersPerSecond { get; set; }
-        public decimal LomnaFlowLitersPerSecond { get; set; }
+        public string Status { get; set; }
+        public double OlseFlowLitersPerSecond { get; set; }
+        public double LomnaFlowLitersPerSecond { get; set; }
         public bool EmailNotificationSent { get; set; }
         public string EmailNotificationJson { get; set; }
         public bool SmsNotificationSent { get; set; }
         public string SmsNotificationJson { get; set; }
         public string NexmoRemainingBalanceEur { get; set; }
-        public string PartitionKey { get; set; }
-        public string RowKey { get; set; }
-        public DateTimeOffset? Timestamp { get; set; }
-        public ETag ETag { get; set; }
     }
 }

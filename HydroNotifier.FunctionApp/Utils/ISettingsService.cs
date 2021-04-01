@@ -6,5 +6,6 @@
         string SmsApiSecret { get; }
         string SmsTo { get; }
         string EmailTo { get; }
+        string TableStorageConnectionString { get; }
     }
 }

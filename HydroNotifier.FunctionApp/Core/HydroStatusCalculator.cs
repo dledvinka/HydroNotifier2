@@ -7,10 +7,10 @@ namespace HydroNotifier.FunctionApp.Core
     public class HydroStatusCalculator
     {
         private readonly ITelemetry _tc;
-        private const decimal NORMAL_TO_LOW_THRESHOLD = 630.0M;
-        private const decimal LOW_TO_NORMAL_THRESHOLD = 650.0M;
-        private const decimal NORMAL_TO_HIGH_THRESHOLD = 20000.0M;
-        private const decimal HIGH_TO_NORMAL_THRESHOLD = 13000.0M;
+        private const double NORMAL_TO_LOW_THRESHOLD = 630.0;
+        private const double LOW_TO_NORMAL_THRESHOLD = 650.0;
+        private const double NORMAL_TO_HIGH_THRESHOLD = 20000.0;
+        private const double HIGH_TO_NORMAL_THRESHOLD = 13000.0;
 
         public HydroStatusCalculator(ITelemetry tc)
         {
@@ -41,10 +41,10 @@ namespace HydroNotifier.FunctionApp.Core
             return status;
         }
 
-        private void ReportTelemetry(HydroStatus status, decimal flowSum)
+        private void ReportTelemetry(HydroStatus status, double flowSum)
         {
             _tc.TrackMetric("FlowSum", flowSum);
-            _tc.TrackMetric("HydroStatus", (decimal)status);
+            _tc.TrackMetric("HydroStatus", (double)status);
         }
     }
 }

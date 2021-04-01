@@ -10,20 +10,20 @@ namespace HydroNotifier.Tests
     {
         private readonly List<HydroData> _lowFlowData = new List<HydroData>()
         {
-            new HydroData(string.Empty, string.Empty, 100.0M),
-            new HydroData(string.Empty, string.Empty, 200.0M),
+            new HydroData(string.Empty, string.Empty, 100.0),
+            new HydroData(string.Empty, string.Empty, 200.0),
         };
 
         private readonly List<HydroData> _normalFlowData = new List<HydroData>()
         {
-            new HydroData(string.Empty, string.Empty, 1000.0M),
-            new HydroData(string.Empty, string.Empty, 2000.0M),
+            new HydroData(string.Empty, string.Empty, 1000.0),
+            new HydroData(string.Empty, string.Empty, 2000.0),
         };
 
         private readonly List<HydroData> _highFlowData = new List<HydroData>()
         {
-            new HydroData(string.Empty, string.Empty, 10000.0M),
-            new HydroData(string.Empty, string.Empty, 20000.0M),
+            new HydroData(string.Empty, string.Empty, 10000.0),
+            new HydroData(string.Empty, string.Empty, 20000.0),
         };
 
         private readonly Mock<ITelemetry> _telemetry = new Mock<ITelemetry>();

@@ -2,7 +2,7 @@
 {
     public class HydroData
     {
-        public HydroData(string riverName, string timestamp, decimal flowLitersPerSecond)
+        public HydroData(string riverName, string timestamp, double flowLitersPerSecond)
         {
             RiverName = riverName;
             Timestamp = timestamp;
@@ -11,6 +11,6 @@
 
         public string RiverName { get; }
         public string Timestamp { get; }
-        public decimal FlowLitersPerSecond { get; }
+        public double FlowLitersPerSecond { get; }
     }
 }

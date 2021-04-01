@@ -15,7 +15,7 @@ namespace HydroNotifier.FunctionApp.Notifications
             var request = new SMS.SMSRequest();
 
             string stateName = Convert.StatusToText(currentStatus);
-            decimal flowSum = data.Sum(p => p.FlowLitersPerSecond);
+            double flowSum = data.Sum(p => p.FlowLitersPerSecond);
 
             string message = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp.ToString(CultureInfo.CreateSpecificCulture("cs-CZ"))}, Prutok: {flowSum.ToString(CultureInfo.CreateSpecificCulture("cs-CZ"))} l/s";
 

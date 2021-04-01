@@ -33,12 +33,12 @@ namespace HydroNotifier.FunctionApp.Functions
 
                 List<HydroData> data = new List<HydroData>()
             {
-                new HydroData("TestRiverName1", DateTime.UtcNow.ToString(), 50.0M),
-                new HydroData("TestRiverName2", DateTime.UtcNow.ToString(), 60.0M),
+                new HydroData("TestRiverName1", DateTime.UtcNow.ToString(), 50.0),
+                new HydroData("TestRiverName2", DateTime.UtcNow.ToString(), 60.0),
             };
 
                 var tableService = TableService.Create();
-                var flowData = tableService.GetAll<FlowDataEntity>().OrderByDescending(e => e.Timestamp);
+                //var flowData = tableService.GetAll<FlowDataEntity>().OrderByDescending(e => e.Timestamp);
                 var currentStatus = HydroStatus.Normal;
 
                 var message = new EmailMessageBuilder(settingsService, log)
