@@ -20,15 +20,17 @@ namespace HydroNotifier.FunctionApp.Core
         private readonly ITelemetry _tc;
         private readonly ITableService _tableService;
         private readonly IAsyncCollector<SendGridMessage> _messages;
-        private readonly IStateService _stateService;
         private readonly ISettingsService _settingsService;
 
-        public HydroGuard(ITableService tableService, IAsyncCollector<SendGridMessage> messages, IStateService stateService,
-            ISettingsService settingsService, ILogger log, ITelemetry tc)
+        public HydroGuard(
+            ITableService tableService, 
+            IAsyncCollector<SendGridMessage> messages, 
+            ISettingsService settingsService, 
+            ILogger log, 
+            ITelemetry tc)
         {
             _tableService = tableService;
             _messages = messages;
-            _stateService = stateService;
             _settingsService = settingsService;
             _log = log;
             _tc = tc;
@@ -36,8 +38,7 @@ namespace HydroNotifier.FunctionApp.Core
 
         public async Task DoAsync()
         {
-            bool notificationsSent;
-            string emailJson = string.Empty, smsJson = string.Empty, remainingBalanceEur = string.Empty;
+            string emailJson = null, smsJson = null, remainingBalanceEur = null;
             List<HydroData> hydroData = new List<HydroData>();
 
             using (HttpClient client = new HttpClient())
@@ -46,46 +47,41 @@ namespace HydroNotifier.FunctionApp.Core
                 hydroData.Add(await new WebScraper(_olseQuery, client, _log).GetLatestValuesAsync());
             }
 
-            var lastReportedStatus = _stateService.GetStatus();
+            var lastReportedStatus = GetLastReportedStatus();
             _log.LogInformation($"Previous status: {lastReportedStatus}");
             HydroStatus currentStatus = new HydroStatusCalculator(_tc).GetCurrentStatus(hydroData, lastReportedStatus) ;
             _log.LogInformation($"Current status: {currentStatus}");
             bool statusChanged = currentStatus != lastReportedStatus;
+
             if (statusChanged)
             {
                 _log.LogInformation($"Status change detected, sending notifications...");
-                (notificationsSent, emailJson, smsJson, remainingBalanceEur) = await SendNotificationsAsync(currentStatus, hydroData);
-
-                if (notificationsSent)
-                {
-                    _stateService.SetStatus(currentStatus);
-                    _log.LogInformation($"Persisted status set to: {currentStatus}");
-                }
+                (emailJson, smsJson, remainingBalanceEur) = await SendNotificationsAsync(currentStatus, hydroData);
             }
 
-            AddToStorage(hydroData, emailJson, smsJson, remainingBalanceEur);
+            AddToStorage(hydroData, emailJson, smsJson, remainingBalanceEur, currentStatus);
         }
 
-        private void AddToStorage(List<HydroData> hydroData, string emailJson, string smsJson, string nexmoRemainingBalanceEur)
+        private void AddToStorage(List<HydroData> hydroData, string emailJson, string smsJson, string nexmoRemainingBalanceEur, HydroStatus currentStatus)
         {
             var fde = new FlowDataEntity()
             {
-                PartitionKey = "Data",
                 RowKey = Guid.NewGuid().ToString(),
                 LomnaFlowLitersPerSecond = hydroData[0].FlowLitersPerSecond,
                 OlseFlowLitersPerSecond = hydroData[1].FlowLitersPerSecond,
-                EmailNotificationSent = string.IsNullOrWhiteSpace(emailJson),
+                EmailNotificationSent = !string.IsNullOrWhiteSpace(emailJson),
                 EmailNotificationJson = emailJson,
-                SmsNotificationSent = string.IsNullOrWhiteSpace(smsJson),
+                SmsNotificationSent = !string.IsNullOrWhiteSpace(smsJson),
                 SmsNotificationJson = smsJson,
                 NexmoRemainingBalanceEur = nexmoRemainingBalanceEur,
+                Status = currentStatus.ToString(),
                 Timestamp = DateTime.UtcNow
             };
 
-            _tableService.AddEntity(fde);
+            _tableService.InsertOrMergeAsync(fde);
         }
 
-        private async Task<(bool notificationsSent, string emailJson, string smsJson, string remainingBalanceEur)> SendNotificationsAsync(HydroStatus currentStatus, List<HydroData> data)
+        private async Task<(string emailJson, string smsJson, string remainingBalanceEur)> SendNotificationsAsync(HydroStatus currentStatus, List<HydroData> data)
         {
             string emailJson, smsJson, remainingBalanceEur;
             
@@ -99,10 +95,10 @@ namespace HydroNotifier.FunctionApp.Core
             catch (Exception ex)
             {
                 _log.LogError(ex, "Error during sending notifications");
-                return (false, string.Empty, string.Empty, string.Empty);
+                return (string.Empty, string.Empty, string.Empty);
             }
 
-            return (true, emailJson, smsJson, remainingBalanceEur);
+            return (emailJson, smsJson, remainingBalanceEur);
         }
 
         private async Task<string> SendEmailNotificationAsync(HydroStatus currentStatus, List<HydroData> data)
@@ -130,6 +126,21 @@ namespace HydroNotifier.FunctionApp.Core
             string remainingBalanceEur = smsNotifier.SendSmsNotification(message);
 
             return (jsonString, remainingBalanceEur);
+        }
+
+        private HydroStatus GetLastReportedStatus()
+        {
+            var lastSavedEntity = _tableService.GetLastOrDefault();
+
+            if (lastSavedEntity != null)
+            {
+                if (Enum.TryParse(lastSavedEntity.Status, out HydroStatus status))
+                {
+                    return status;
+                }
+            }
+
+            return HydroStatus.Normal;
         }
     }
 }

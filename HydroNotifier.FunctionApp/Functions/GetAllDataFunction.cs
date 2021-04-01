@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using HydroNotifier.FunctionApp.Storage;
+using HydroNotifier.FunctionApp.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -10,27 +12,19 @@ using Newtonsoft.Json;
 
 namespace HydroNotifier.FunctionApp.Functions
 {
-    public static class HttpGetStatusFunction
+    public static class GetAllDataFunction
     {
-        [FunctionName("HttpGetStatusFunction")]
+        [FunctionName("GetAllData")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             try
             {
-
-                log.LogInformation("HttpTrigger => HttpGetStatusFunction");
-
-                string name = req.Query["name"];
-
-                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                dynamic data = JsonConvert.DeserializeObject(requestBody);
-                name = name ?? data?.name;
-
-                string responseMessage = string.IsNullOrEmpty(name)
-                    ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                    : $"Hello, {name}. This HTTP triggered function executed successfully.";
+                var settingsService = new SettingsService();
+                var tableService = new TableService(settingsService);
+                var allData = tableService.GetAll();
+                string responseMessage = JsonConvert.SerializeObject(allData);
 
                 return new OkObjectResult(responseMessage);
             }

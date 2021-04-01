@@ -19,11 +19,10 @@ namespace HydroNotifier.FunctionApp.Functions
 {
     public static class TestSendSmsFunction
     {
-        [FunctionName("TestSendSmsFunction")]
+        //[FunctionName("TestSendSmsFunction")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
             [SendGrid] IAsyncCollector<SendGridMessage> messageCollector,
-            ExecutionContext executionContext,
             ILogger log)
         {
             try
@@ -37,7 +36,6 @@ namespace HydroNotifier.FunctionApp.Functions
                 new HydroData("TestRiverName2", DateTime.UtcNow.ToString(), 60.0),
             };
 
-                var tableService = TableService.Create();
                 //var flowData = tableService.GetAll<FlowDataEntity>().OrderByDescending(e => e.Timestamp);
                 var currentStatus = HydroStatus.Normal;
 

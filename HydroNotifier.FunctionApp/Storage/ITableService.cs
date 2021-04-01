@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HydroNotifier.FunctionApp.Storage
 {
     public interface ITableService
     {
-        void AddEntity<T>(T tableEntity);
+        List<FlowDataEntity> GetAll();
+        FlowDataEntity GetLastOrDefault();
+        Task<FlowDataEntity> InsertOrMergeAsync(FlowDataEntity entity);
     }
 }
