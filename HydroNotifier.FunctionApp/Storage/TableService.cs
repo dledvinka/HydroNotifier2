@@ -26,7 +26,14 @@ namespace HydroNotifier.FunctionApp.Storage
 
         public async Task<FlowDataEntity> InsertOrMergeAsync(FlowDataEntity entity)
         {
+            if (string.IsNullOrWhiteSpace(entity.RowKey))
+            {
+                var invertedTimeKey = (DateTime.MaxValue.Ticks - DateTime.UtcNow.Ticks).ToString("d19");
+                entity.RowKey = invertedTimeKey;
+            }
+
             entity.PartitionKey = _partitionKey;
+            
             TableOperation insertOrMergeOperation = TableOperation.InsertOrMerge(entity);
             TableResult result = await _table.ExecuteAsync(insertOrMergeOperation);
             
@@ -37,8 +44,7 @@ namespace HydroNotifier.FunctionApp.Storage
         {
             // Construct the query operation for all customer entities where PartitionKey="Smith".
             TableQuery<FlowDataEntity> query = new TableQuery<FlowDataEntity>()
-                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, _partitionKey))
-                .OrderByDesc("Timestamp");
+                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, _partitionKey));
 
             return _table.ExecuteQuery(query).ToList();
         }
@@ -48,7 +54,7 @@ namespace HydroNotifier.FunctionApp.Storage
             // Construct the query operation for all customer entities where PartitionKey="Smith".
             TableQuery<FlowDataEntity> query = new TableQuery<FlowDataEntity>()
                 .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, _partitionKey))
-                .OrderByDesc("Timestamp")
+                //.OrderByDesc("Timestamp") // works for Cosmos DB only
                 .Take(1);
 
             var result = _table.ExecuteQuery(query).ToList();

@@ -66,7 +66,6 @@ namespace HydroNotifier.FunctionApp.Core
         {
             var fde = new FlowDataEntity()
             {
-                RowKey = Guid.NewGuid().ToString(),
                 LomnaFlowLitersPerSecond = hydroData[0].FlowLitersPerSecond,
                 OlseFlowLitersPerSecond = hydroData[1].FlowLitersPerSecond,
                 EmailNotificationSent = !string.IsNullOrWhiteSpace(emailJson),

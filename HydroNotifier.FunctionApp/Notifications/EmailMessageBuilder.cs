@@ -23,7 +23,7 @@ namespace HydroNotifier.FunctionApp.Notifications
         public SendGridMessage BuildMessage(List<HydroData> data, HydroStatus currentStatus, DateTime stateChangedTimeStamp)
         {
             _log.LogInformation("EmailTo: " + _settingsService.EmailTo);
-            var targetEmails = _settingsService.EmailTo.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToList();
+            var targetEmails = _settingsService.EmailTo.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToList();
             _log.LogInformation("EmailTo: " + _settingsService.EmailTo);
             var emailMessage = new SendGridMessage();
 
@@ -38,7 +38,7 @@ namespace HydroNotifier.FunctionApp.Notifications
             emailMessage.Subject = $"Jablunkov MVE, Stav: {stateName}, Datum: {stateChangedTimeStamp}";
             emailMessage.PlainTextContent = message;
             targetEmails.ForEach(te => emailMessage.AddTo(te));
-            emailMessage.From = new EmailAddress("hydronotifier@no-reply.com", "HydroNotifier");
+            emailMessage.From = new EmailAddress(_settingsService.SendGridSenderIndentityEmail, _settingsService.SendGridSenderIdentityName);
 
             return emailMessage;
         }

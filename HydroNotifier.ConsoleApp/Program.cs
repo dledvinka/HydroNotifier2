@@ -41,7 +41,6 @@ namespace HydroNotifier.ConsoleApp
             var flowData = new FlowDataEntity()
             {
                 PartitionKey = "Data",
-                RowKey = Guid.NewGuid().ToString(),
                 OlseFlowLitersPerSecond = 50.0,
                 LomnaFlowLitersPerSecond = 60.0,
                 EmailNotificationSent = true,

@@ -7,5 +7,7 @@
         public string SmsTo => System.Environment.GetEnvironmentVariable("SmsTo");
         public string EmailTo => System.Environment.GetEnvironmentVariable("EmailTo");
         public string TableStorageConnectionString=> System.Environment.GetEnvironmentVariable("TableStorageConnectionString");
+        public string SendGridSenderIndentityEmail => System.Environment.GetEnvironmentVariable("SendGridSenderIndentityEmail");
+        public string SendGridSenderIdentityName => System.Environment.GetEnvironmentVariable("SendGridSenderIdentityName");
     }
 }
