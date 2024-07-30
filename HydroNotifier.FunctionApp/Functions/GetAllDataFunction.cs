@@ -1,8 +1,9 @@
+namespace HydroNotifier.FunctionApp.Functions;
+
 using System;
-using System.IO;
 using System.Threading.Tasks;
-using HydroNotifier.FunctionApp.Storage;
-using HydroNotifier.FunctionApp.Utils;
+using HydroNotifier.Core.Storage;
+using HydroNotifier.Core.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -10,30 +11,27 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace HydroNotifier.FunctionApp.Functions
+public static class GetAllDataFunction
 {
-    public static class GetAllDataFunction
+    [FunctionName("GetAllData")]
+    public static async Task<IActionResult> Run(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]
+        HttpRequest req,
+        ILogger log)
     {
-        [FunctionName("GetAllData")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
-            ILogger log)
+        try
         {
-            try
-            {
-                var settingsService = new SettingsService();
-                var tableService = new TableService(settingsService);
-                var allData = tableService.GetAll();
-                string responseMessage = JsonConvert.SerializeObject(allData);
+            var settingsService = new SettingsService();
+            var tableService = new TableService(settingsService);
+            var allData = tableService.GetAll();
+            var responseMessage = JsonConvert.SerializeObject(allData);
 
-                return new OkObjectResult(responseMessage);
-            }
-            catch (Exception ex)
-            {
-                log.LogCritical(ex, $"Exception found {ex.Message}");
-                return new BadRequestResult();
-            }
+            return new OkObjectResult(responseMessage);
+        }
+        catch (Exception ex)
+        {
+            log.LogCritical(ex, $"Exception found {ex.Message}");
+            return new BadRequestResult();
         }
     }
 }
-
