@@ -1,11 +1,10 @@
-namespace HydroNotifier.FunctionApp.Functions;
+namespace HydroNotifier.FunctionAppv4.Functions;
 
 using System;
 using System.Threading.Tasks;
 using HydroNotifier.Core.Entities;
 using HydroNotifier.Core.Storage;
 using HydroNotifier.Core.Utils;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using SendGrid.Helpers.Mail;
@@ -13,11 +12,11 @@ using SendGrid.Helpers.Mail;
 public static class HydroGuardFunction
 {
     [FunctionName("HydroGuardTimerFunction")]
-    public static async Task<IActionResult> Run(
+    public static async Task Run(
         //[TimerTrigger("*/5 * * * * *")]TimerInfo myTimer,
         //[Table("HydroNotifierFlowData", Connection = "DefaultEndpointsProtocol=https;AccountName=hydronotifierfunctionapp;AccountKey=b6/bnGXZI3Gh1Jh5ScaKNboMAZCYbDwv/PYJpGemcOf31JlzjhgZOlVfqkJ2VioOIhKCNk5C8fZYZsnUMrxE9w==;EndpointSuffix=core.windows.net")]
-        //[TimerTrigger("0 0 * * * *", RunOnStartup = true)]TimerInfo myTimer,
-        [TimerTrigger("0 0 * * * *")] TimerInfo myTimer,
+        [TimerTrigger("0 0 * * * *", RunOnStartup = true)] TimerInfo myTimer,
+        //[TimerTrigger("0 */5 * * * *")] TimerInfo myTime,
         [SendGrid] IAsyncCollector<SendGridMessage> messageCollector,
         ILogger log)
     {
@@ -36,8 +35,7 @@ public static class HydroGuardFunction
         catch (Exception ex)
         {
             log.LogCritical(ex, $"Exception found {ex.Message}");
+            throw;
         }
-
-        return new OkResult();
     }
 }

@@ -1,4 +1,4 @@
-namespace HydroNotifier.FunctionApp.Functions;
+namespace HydroNotifier.FunctionAppv4.Functions;
 
 using System;
 using System.Collections.Generic;
