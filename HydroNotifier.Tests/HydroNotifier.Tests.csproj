@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HydroNotifier.FunctionApp\HydroNotifier.FunctionApp.csproj" />
+    <ProjectReference Include="..\HydroNotifier.Core\HydroNotifier.Core.csproj" />
   </ItemGroup>
 
 </Project>

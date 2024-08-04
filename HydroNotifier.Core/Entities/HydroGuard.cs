@@ -6,12 +6,8 @@ using HydroNotifier.Core.Storage;
 using HydroNotifier.Core.Utils;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
-using Nexmo.Api;
 using SendGrid.Helpers.Mail;
-using Vonage.Messages.WhatsApp;
 using Vonage;
-using Vonage.Messages;
-using Vonage.Messaging;
 using Vonage.Request;
 
 public class HydroGuard

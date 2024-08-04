@@ -15,7 +15,7 @@ public static class HydroGuardFunction
     public static async Task Run(
         //[TimerTrigger("*/5 * * * * *")]TimerInfo myTimer,
         //[Table("HydroNotifierFlowData", Connection = "DefaultEndpointsProtocol=https;AccountName=hydronotifierfunctionapp;AccountKey=b6/bnGXZI3Gh1Jh5ScaKNboMAZCYbDwv/PYJpGemcOf31JlzjhgZOlVfqkJ2VioOIhKCNk5C8fZYZsnUMrxE9w==;EndpointSuffix=core.windows.net")]
-        [TimerTrigger("0 0 * * * *", RunOnStartup = true)] TimerInfo myTimer,
+        [TimerTrigger("0 0 * * * *", RunOnStartup = true)] TimerInfo myTimer, // hourly
         //[TimerTrigger("0 */5 * * * *")] TimerInfo myTime,
         [SendGrid] IAsyncCollector<SendGridMessage> messageCollector,
         ILogger log)
