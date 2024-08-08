@@ -46,11 +46,11 @@ public class HydroGuard
         _log.LogInformation($"Previous status: {lastReportedStatus}");
         var currentStatus = new HydroStatusCalculator(_tc).GetCurrentStatus(hydroData, lastReportedStatus);
         _log.LogInformation($"Current status: {currentStatus}");
-        var statusChanged = currentStatus != lastReportedStatus;
+        var notificationRequired = currentStatus != lastReportedStatus && currentStatus is HydroStatus.High;
 
-        if (statusChanged)
+        if (notificationRequired)
         {
-            _log.LogInformation($"Status change detected, sending notifications...");
+            _log.LogInformation($"Status change to High detected, sending notifications...");
             (emailJson, smsJson, remainingBalanceEur) = await SendNotificationsAsync(currentStatus, hydroData);
         }
 
